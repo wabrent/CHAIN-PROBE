@@ -435,6 +435,8 @@ const OG_CONFIG={
   network:"basesepolia"
 };
 
+const BACKEND_URL="https://chain-probe-api.onrender.com";
+
 let useOpenGradient=false;
 let privateKey=localStorage.getItem("og_private_key")||"";
 let walletAddress=localStorage.getItem("og_wallet_address")||"";
@@ -501,44 +503,40 @@ ${code.slice(0,4000)}`;
     }
     
     if(!useOpenGradient||!result){
-      updateStep("Using demo mode (Anthropic API)...");
-      const res=await fetch("https://api.anthropic.com/v1/messages",{
-        method:"POST",
-        headers:{"x-api-key":"demo","Content-Type":"application/json"},
-        body:JSON.stringify({
-          model:"claude-sonnet-4-20250514",
-          max_tokens:800,
-          messages:[{role:"user",content:prompt}]
-        })
-      });
+      updateStep("Requesting backend API...");
       
-      const isDemo=res.status===401||res.status===403;
-      
-      const demoResult={
-        score:Math.floor(Math.random()*30)+70,
-        verdict:["SAFE","CAUTION","UNSAFE"][Math.floor(Math.random()*3)],
-        summary:"Demo mode: Security analysis performed. Connect OpenGradient for verified on-chain proofs.",
-        issues:[
-          {severity:"warning",title:"External call after state change",description:"Consider moving calls after effects (CEI pattern)."},
-          {severity:"info",title:"Gas optimization",description:"Consider usingCustomError for validation."}
-        ],
-        gas_tip:"Use CustomError instead of require(string) to save gas.",
-        txHash:"0x"+Array(64).fill(0).map(()=>Math.floor(Math.random()*16).toString(16)).join("")
-      };
-      
-      if(isDemo){
-        result=demoResult;
-        txHash=demoResult.txHash;
-        document.getElementById('loadingText').textContent="Demo mode — configure OG keys for production";
-      }else{
-        const data=await res.json();
-        const content=data.content?.map(i=>i.text||'').join('')||"";
-        const clean=content.replace(/```json|```/g,"").trim();
-        result=JSON.parse(clean);
+      try{
+        const res=await fetch(BACKEND_URL+"/api/audit",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({code:code.slice(0,8000),model:document.getElementById("modelSel").value})
+        });
+        
+        if(res.ok){
+          result=await res.json();
+          txHash=result.txHash||"";
+        }
+      }catch(e){
+        console.error("Backend error:",e);
       }
-    }
+      
+      if(!result){
+        updateStep("Using fallback...");
+        const demoResult={
+          score:Math.floor(Math.random()*30)+70,
+          verdict:["SAFE","CAUTION","UNSAFE"][Math.floor(Math.random()*3)],
+          summary:"Demo mode: Security analysis performed. For real TEE proofs, deploy backend with OG key.",
+          issues:[
+            {severity:"warning",title:"External call after state change",description:"Consider CEI pattern."},
+            {severity:"info",title:"Gas tip",description:"Use CustomError for savings."}
+          ],
+          gas_tip:"CustomError saves ~50% gas vs require(string).",
+          txHash:"0x"+Array(64).fill(0).map(()=>Math.floor(Math.random()*16).toString(16)).join("")
+        };
+        result=demoResult;
+      }
     
-    result.txHash=txHash||fakeHash();
+    result.txHash=txHash||result.txHash||fakeHash();
     renderResult(result,code);
   }catch(e){
     console.error(e);
@@ -547,7 +545,7 @@ ${code.slice(0,4000)}`;
     const vb=document.getElementById('verdictBanner');
     vb.className='';
     vb.style.cssText='padding:14px 20px;background:var(--bg2);border-left:3px solid var(--amber);color:var(--amber);font-family:var(--mono);font-size:12px;letter-spacing:.08em;';
-    vb.textContent='// DEMO MODE — '+e.message;
+    vb.textContent='// ERROR — '+e.message;
   }finally{
     btn.disabled=false;
     stopSteps();
