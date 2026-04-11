@@ -1,6 +1,0 @@
-services:
-  - type: static
-    name: chain-probe
-    buildCommand: ""
-    staticPublish: .
-    engine: none
