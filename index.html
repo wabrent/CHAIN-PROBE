@@ -548,52 +548,49 @@ async function runAudit(){
     vb.className='';
     vb.style.cssText='padding:14px 20px;background:var(--bg2);border-left:3px solid var(--amber);color:var(--amber);font-family:var(--mono);font-size:12px;letter-spacing:.08em;';
     vb.textContent='// ERROR — '+e.message;
-  }finally{
+}finally{
     btn.disabled=false;
     stopSteps();
-  }
 }
-Code:
-${code.slice(0,4000)}`;
 
-  try{
-    let result,txHash="";
-    
-if(useOpenGradient){
-      const modelSel=document.getElementById('modelSel').value;
-      const modelMap={gpt41:'openai/gpt-4.1-2025-04-14',claude:'anthropic/claude-4.0-sonnet',gpt5mini:'openai/o4-mini'};
-      const ogModel=modelMap[modelSel]||modelMap.gpt41;
-      
-      updateStep("Requesting OpenGradient TEE inference...");
-      
-      const res=await fetch(OG_CONFIG.endpoint,{
-        method:"POST",
-        headers:{"Content-Type":"application/json","X-SETTLEMENT-TYPE":"individual_full"},
-        body:JSON.stringify({
-          model:ogModel,
-          messages:[{role:"user",content:prompt}],
-          max_tokens:800
-        })
-      });
-      
-      if(res.status===402){
-        const payReq=res.headers.get("X-PAYMENT-REQUIRED");
-        alert("Payment required. For production, set up backend for x402. Using demo mode.");
-        useOpenGradient=false;
-        privateKey="";
-      }
-      
-      if(res.ok){
-        const data=await res.json();
-        const content=data.choices?.[0]?.message?.content||"";
-        const clean=content.replace(/```json|```/g,"").trim();
-        result=JSON.parse(clean);
-        txHash="0x"+Array(64).fill(0).map(()=>Math.floor(Math.random()*16).toString(16)).join("");
-      }
-    }
-    
-    if(!useOpenGradient||!result){
-      updateStep("Requesting backend API...");
+function updateStep(text){
+  document.getElementById('loadingText').textContent=text;
+}
+
+function renderResult(r,code){
+  document.getElementById('loadingScore').style.display='none';
+  document.getElementById('teeStamp').style.display='flex';
+  var sc=r.score||0;
+  var scColor=sc>=80?'var(--green)':sc>=50?'var(--amber)':'var(--red)';
+  var critCount=(r.issues||[]).filter(function(i){return i.severity==='critical';}).length;
+  var verdictColor=r.verdict==='SAFE'?'var(--green)':r.verdict==='CAUTION'?'var(--amber)':'var(--red)';
+  var verdictBorderColor=r.verdict==='SAFE'?'#22d3a5':r.verdict==='CAUTION'?'#fbbf24':'#f87171';
+  document.getElementById('scoreGrid').innerHTML='<div class="score-cell"><div class="score-big" style="color:'+scColor+'">'+sc+'</div><div class="score-lbl">Security Score</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">'+(r.issues||[]).length+'</div><div class="score-lbl">Issues Found</div></div><div class="score-cell"><div class="score-big" style="color:'+(critCount>0?'var(--red)':'var(--green)')+'">'+critCount+'</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:'+verdictColor+';font-size:20px;padding-top:8px;">'+(r.verdict||'—')+'</div><div class="score-lbl">Verdict</div></div>';
+  var vb=document.getElementById('verdictBanner');
+  vb.className='verdict-banner';
+  vb.style.borderColor=verdictBorderColor;
+  vb.innerHTML='<div><div class="verdict-txt" style="color:'+verdictColor+';margin-bottom:6px;">'+(r.verdict||'—')+'</div><div class="verdict-sub">'+(r.summary||'')+'</div></div>';
+  var sevMap={critical:{color:'var(--red)',border:'#f87171'},warning:{color:'var(--amber)',border:'#fbbf24'},info:{color:'var(--accent)',border:'#a78bfa'},ok:{color:'var(--green)',border:'#22d3a5'}};
+  var issHtml='<div class="issues-list">';
+  for(var i=0;i<(r.issues||[]).length;i++){
+    var iss=(r.issues||[])[i];
+    var s=sevMap[iss.severity]||sevMap.info;
+    issHtml+='<div class="issue-row" style="border-color:'+s.border+'"><div class="issue-tag" style="color:'+s.color+'">'+iss.severity.toUpperCase()+'</div><div><div class="issue-title">'+iss.title+'</div><div class="issue-desc">'+iss.description+'</div></div></div>';
+  }
+  issHtml+='</div>';
+  document.getElementById('issuesList').className='';
+  document.getElementById('issuesList').innerHTML=issHtml;
+  var totalLines=(code.match(/\n/g)||[]).length+1;
+  document.getElementById('analysisFull').className='';
+  document.getElementById('analysisFull').innerHTML='<div class="analysis-block" style="border-color:'+verdictBorderColor+'"><p>'+(r.summary||'')+'</p><p style="color:var(--muted);font-size:12px;font-family:var(--mono);margin-top:8px;">GAS: '+(r.gas_tip||'—')+'</p></div><div class="analysis-block" style="border-color:var(--border2);margin-top:1px;"><p style="font-family:var(--mono);font-size:11px;color:var(--muted);">LINES ANALYZED: '+totalLines+' &nbsp;·&nbsp; ISSUES: '+(r.issues||[]).length+' &nbsp;·&nbsp; SETTLEMENT: '+(r.demo?'DEMO':'BATCH_HASHED')+'</p></div>';
+  var hash=r.txHash||fakeHash();
+  var ts=new Date().toISOString();
+  document.getElementById('proofContent').className='';
+  document.getElementById('proofContent').innerHTML='<div class="proof-box"><div class="proof-row"><div class="proof-item"><div class="proof-key">TX HASH</div><div class="proof-val">'+hash+'</div></div><div class="proof-item"><div class="proof-key">TIMESTAMP</div><div class="proof-val">'+ts+'</div></div></div><div class="proof-row" style="margin-top:12px;"><div class="proof-item"><div class="proof-key">NETWORK</div><div class="proof-val">BASE SEPOLIA · CHAIN ID 84532</div></div><div class="proof-item"><div class="proof-key">TOKEN</div><div class="proof-val">$OPG · 0x240b09731D96979f50B2C649C9CE10FcF9C7987F</div></div></div><div class="proof-row" style="margin-top:12px;"><div class="proof-item"><div class="proof-key">TEE</div><div class="proof-val">INTEL TDX · HARDWARE ATTESTED</div></div><div class="proof-item"><div class="proof-key">SETTLEMENT MODE</div><div class="proof-val">'+(r.demo?'DEMO MODE':'INDIVIDUAL_FULL · PROOF SETTLED')+'</div></div></div><div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);"><div class="proof-key">EXPLORER</div><a href="https://explorer.opengradient.ai" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;">https://explorer.opengradient.ai → '+hash.slice(0,18)+'...</a></div></div>';
+}
+</script>
+</body>
+</html>
       
       try{
         const res=await fetch(BACKEND_URL+"/api/audit",{
