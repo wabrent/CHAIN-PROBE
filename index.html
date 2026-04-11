@@ -105,7 +105,7 @@ contract Vault {
 <div class="tab-panel" id="tab-proof"><div id="proofContent" class="empty">// PROOF WILL APPEAR HERE</div></div></div>
 <footer><div class="footer-logo">CHAIN<span>—</span>PROBE</div><div class="footer-links"><a class="footer-link" href="https://docs.opengradient.ai">OpenGradient</a><a class="footer-link" href="https://explorer.opengradient.ai">Explorer</a><a class="footer-link" href="https://faucet.opengradient.ai">Faucet</a></div><div class="footer-copy">© 2026 ChainProbe</div></footer>
 <script>
-var EXAMPLE="pragma solidity ^0.8.0; contract Vault { mapping(address=>uint256) public balances; function deposit() external payable { balances[msg.sender]+=msg.value; } function withdraw(uint256 amount){ require(balances[msg.sender]>=amount); (bool ok,)=msg.sender.call{value:amount}(""); balances[msg.sender]-=amount; } }";
+var EXAMPLE='pragma solidity ^0.8.0; contract Vault { mapping(address=>uint256) public balances; function deposit() external payable { balances[msg.sender]+=msg.value; } function withdraw(uint256 amount){ require(balances[msg.sender]>=amount); } }';
 function loadExample(){document.getElementById('codeInput').value=EXAMPLE;}
 function clearAll(){document.getElementById('codeInput').value='';resetUI();}
 function switchTab(t){document.querySelectorAll('.tab').forEach(function(e){e.classList.remove('active')});document.querySelectorAll('.tab-panel').forEach(function(e){e.classList.remove('active')});document.querySelector('[data-tab="'+t+'"]').classList.add('active');document.getElementById('tab-'+t).classList.add('active');}
