@@ -416,6 +416,7 @@ contract SimpleVault {
 </div>
 
 <script>
+window.onerror = function(msg,url,line){console.error(msg+' at line '+line);return false;};
 const EXAMPLE=`pragma solidity ^0.8.0;\n\ncontract SimpleVault {\n    mapping(address => uint256) public balances;\n\n    function deposit() external payable {\n        balances[msg.sender] += msg.value;\n    }\n\n    function withdraw(uint256 amount) external {\n        require(balances[msg.sender] >= amount);\n        (bool ok,) = msg.sender.call{value: amount}('');\n        require(ok);\n        balances[msg.sender] -= amount;\n    }\n}`;
 
 function loadExample(){document.getElementById('codeInput').value=EXAMPLE;}
