@@ -4,7 +4,13 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ChainProbe — Audit With Proof</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+.logo-anim{font-size:48px;display:inline-block;animation:logoPulse 2s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(1);text-shadow:0 0 20px rgba(167,139,250,.5)}50%{transform:scale(1.05);text-shadow:0 0 30px rgba(167,139,250,.8)}}
+.logo-wrap{display:inline-block;vertical-align:middle;margin-right:.3em}
+</style>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0a;--bg2:#111;--bg3:#181818;--border:#222;--border2:#2e2e2e;--accent:#a78bfa;--accent2:#7c3aed;--green:#22d3a5;--red:#f87171;--amber:#fbbf24;--text:#f5f5f5;--muted:#888;--mono:'Space Mono',monospace;--sans:'Space Grotesk',sans-serif}
@@ -85,7 +91,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
 <body>
 <nav><div class="nav-logo">CHAIN<span>—</span>PROBE</div><div class="nav-right"><a class="nav-link" href="https://docs.opengradient.ai">Docs</a><a class="nav-link" href="https://explorer.opengradient.ai">Explorer</a><div class="nav-badge">TEE Live</div></div></nav>
 <div class="ticker-wrap"><div class="ticker-inner"><span class="ticker-item">OpenGradient TEE <span>● ONLINE</span></span><span class="ticker-item">Settlement <span>BASE SEPOLIA</span></span><span class="ticker-item">Inference <span>VERIFIED</span></span><span class="ticker-item">Intel TDX <span>ATTESTED</span></span><span class="ticker-item">Models <span>GPT-4.1/CLAUDE</span></span><span class="ticker-item">Token <span>$OPG</span></span><span class="ticker-item">Proof <span>BATCH_HASHED</span></span></div></div>
-<div class="hero"><div class="hero-eyebrow">// Smart Contract Security</div><h1>AUDIT.<br><span class="dim">WITH</span><br>PROOF.</h1><p class="hero-sub">Paste Solidity code. Get AI security analysis inside OpenGradient TEE.</p><div class="hero-stats"><div><div class="hero-stat-num">TEE</div><div class="hero-stat-label">Verified exec</div></div><div><div class="hero-stat-num">On-chain</div><div class="hero-stat-label">Proof hash</div></div><div><div class="hero-stat-num">$OPG</div><div class="hero-stat-label">Payment token</div></div></div></div>
+<div class="hero"><div class="hero-eyebrow">// Smart Contract Security</div><h1><span class="logo-wrap"><span class="logo-anim">🔒</span></span>AUDIT.<br><span class="dim">WITH</span><br>PROOF.</h1><p class="hero-sub">Paste Solidity code. Get AI security analysis inside OpenGradient TEE.</p><div class="hero-stats"><div><div class="hero-stat-num">TEE</div><div class="hero-stat-label">Verified exec</div></div><div><div class="hero-stat-num">On-chain</div><div class="hero-stat-label">Proof hash</div></div><div><div class="hero-stat-num">$OPG</div><div class="hero-stat-label">Payment token</div></div></div></div>
 <div class="tool-wrap"><div class="input-section"><label class="input-label">// Solidity source code</label><textarea id="codeInput" placeholder="pragma solidity ^0.8.0;
 
 contract Vault {
