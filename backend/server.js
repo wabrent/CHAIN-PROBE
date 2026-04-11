@@ -1,40 +1,17 @@
 import express from 'express';
 import cors from 'cors';
-import og from 'opengradient';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
-app.use(express.json({ limit: '10mb' });
+app.use(express.json({ limit: '10mb' }));
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
-const OG_MODEL = process.env.OG_MODEL || "anthropic/claude-4.0-sonnet";
+const OG_ENDPOINT = 'https://llm.opengradient.ai/v1/chat/completions';
+const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
+const CHAIN_ID = 84532;
 
-let llm;
-
-async function initLLM() {
-  if (!PRIVATE_KEY) {
-    console.warn("⚠️ PRIVATE_KEY not set. Set in .env or environment variable.");
-    console.warn("Get keys from: https://faucet.opengradient.ai");
-    return null;
-  }
-  
-  try {
-    llm = new og.LLM({ privateKey: PRIVATE_KEY });
-    console.log("✓ OpenGradient LLM initialized");
-    
-    await llm.ensure_opg_approval({ opg_amount: 10.0 });
-    console.log("✓ OPG approval ensured");
-    
-    return llm;
-  } catch (e) {
-    console.error("Failed to init OpenGradient:", e.message);
-    return null;
-  }
-}
-
-const promptTemplate = `You are ChainProbe, a Solidity smart contract security auditor.
+const auditPrompt = `You are ChainProbe, a Solidity smart contract security auditor.
 
 Analyze this Solidity code for security issues:
 - Reentrancy vulnerabilities
@@ -43,8 +20,6 @@ Analyze this Solidity code for security issues:
 - Front-running risks
 - Missing checks-effects-interactions (CEI)
 - Unchecked return values
-- Signature replay
-- tx.origin usage
 
 Respond ONLY with valid JSON (no markdown):
 {
@@ -73,49 +48,66 @@ app.post('/api/audit', async (req, res) => {
   
   console.log(`\n[${new Date().toISOString()}] Audit request (${code.length} chars)`);
   
-  if (!llm) {
-    const fallback = generateFallbackResult(code);
-    console.log("→ Using fallback (no OG key)");
-    return res.json({ ...fallback, demo: true });
+  const selectedModel = model === 'gpt41' ? 'openai/gpt-4.1-2025-04-14' 
+    : model === 'claude' ? 'anthropic/claude-4.0-sonnet'
+    : 'openai/o4-mini';
+  
+  if (!PRIVATE_KEY) {
+    console.log('→ Using fallback (no OG key)');
+    return res.json(generateFallbackResult(code));
   }
   
   try {
-    const selectedModel = model || OG_MODEL;
     console.log(`→ Model: ${selectedModel}`);
     
-    const messages = [
-      { role: 'system', content: promptTemplate },
-      { role: 'user', content: code.slice(0, 8000) }
-    ];
-    
-    const result = await llm.chat({
-      model: selectedModel,
-      messages,
-      max_tokens: 1200
+    const response = await fetch(OG_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-SETTLEMENT-TYPE': 'individual_full'
+      },
+      body: JSON.stringify({
+        model: selectedModel,
+        messages: [
+          { role: 'system', content: auditPrompt },
+          { role: 'user', content: code.slice(0, 8000) }
+        ],
+        max_tokens: 1200
+      })
     });
     
-    const content = result.chat_output?.content || '';
+    if (response.status === 402) {
+      const paymentRequired = response.headers.get('X-PAYMENT-REQUIRED');
+      console.log('→ Payment required, using fallback');
+      return res.json({ ...generateFallbackResult(code), paymentRequired: true });
+    }
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || '';
     const parsed = parseJSONResponse(content);
     
     console.log(`→ Score: ${parsed.score}, Verdict: ${parsed.verdict}`);
     
     res.json({
       ...parsed,
-      txHash: result.transaction_hash || "",
       model: selectedModel,
       demo: false
     });
     
   } catch (e) {
-    console.error("→ Error:", e.message);
-    res.json({ ...generateFallbackResult(code), error: e.message });
+    console.error('→ Error:', e.message);
+    res.json(generateFallbackResult(code));
   }
 });
 
-app.get('/api/status', async (req, res) => {
+app.get('/api/status', (req, res) => {
   res.json({
-    status: llm ? 'online' : 'demo_mode',
-    model: llm ? OG_MODEL : 'fallback',
+    status: PRIVATE_KEY ? 'og_ready' : 'demo_mode',
+    endpoint: OG_ENDPOINT,
     timestamp: new Date().toISOString()
   });
 });
@@ -133,18 +125,11 @@ function generateFallbackResult(code) {
       description: 'External call before state change. Use checks-effects-interactions pattern.'
     });
   }
-  if (hasAccessControl && code.includes('function') && !code.includes('constructor')) {
+  if (hasAccessControl && code.includes('function')) {
     issues.push({
       severity: 'warning',
       title: 'Missing access control',
       description: 'No onlyOwner modifier on sensitive functions.'
-    });
-  }
-  if (code.includes('uint256') && !code.includes('unchecked')) {
-    issues.push({
-      severity: 'info',
-      title: 'Consider SafeMath',
-      description: 'Solidity 0.8+ has built-in overflow checks.'
     });
   }
   issues.push({
@@ -164,7 +149,8 @@ function generateFallbackResult(code) {
     issues,
     gas_tip: 'Use CustomError for 50%+ gas savings on revert messages.',
     txHash: '0x' + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-    lines_analyzed: lines
+    lines_analyzed: lines,
+    demo: true
   };
 }
 
@@ -178,19 +164,17 @@ function parseJSONResponse(text) {
     const json = text.slice(start, end + 1);
     return JSON.parse(json);
   } catch (e) {
-    console.error("Parse error:", e.message);
+    console.error('Parse error:', e.message);
     return generateFallbackResult('');
   }
 }
 
-initLLM().then(() => {
-  app.listen(PORT, () => {
-    console.log(`
+app.listen(PORT, () => {
+  console.log(`
 ╔═══════════════════════════════════╗
-║     ChainProbe Backend         ║
+║     ChainProbe Backend       ║
 ║     http://localhost:${PORT}          ║
-║     Status: ${llm ? 'OG ONLINE' : 'DEMO MODE'}        ║
+║     Mode: ${PRIVATE_KEY ? 'OG READY' : 'DEMO'}         ║
 ╚═══════════════════════════════════╝
-    `);
-  });
+  `);
 });
