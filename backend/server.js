@@ -201,6 +201,15 @@ app.get('/index.html', (req, res) => {
   }
 });
 
+app.get('/debug', (req, res) => {
+  res.json({
+    cwd: process.cwd(),
+    __dirname,
+    files: require('fs').readdirSync(process.cwd()),
+    env: Object.keys(process.env).filter(k => k.includes('KEY') || k.includes('PORT'))
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════╗
