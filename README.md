@@ -142,7 +142,8 @@ MIT License
 
 ## Author
 
-Brent WA
+- Twitter: https://x.com/graanit2
+- GitHub: https://github.com/wabrent
 
 ## Version
 
