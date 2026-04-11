@@ -603,22 +603,6 @@ ${code.slice(0,4000)}`;
 function updateStep(text){
   document.getElementById('loadingText').textContent=text;
 }
-    privateKey=pk;
-    localStorage.setItem("og_private_key",pk);
-  }
-  
-  const btn=document.getElementById('auditBtn');
-  btn.disabled=true;
-  document.getElementById('loadingScore').style.display='flex';
-  startSteps();
-  switchTab('score');
-
-  const modelSel=document.getElementById('modelSel").value;
-  const modelMap={
-    gpt41:"openai/gpt-4.1-2025-04-14",
-    claude:"anthropic/claude-4.0-sonnet",
-    gpt5mini:"openai/o4-mini"
-  };
   const ogModel=modelMap[modelMap]||modelMap.gpt41;
 
   const messages=[
