@@ -1,10 +1,8 @@
 services:
   - type: web
     name: chain-probe
-    env: node
+    dockerfilePath: Dockerfile
     region: oregon
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
     envVars:
       - key: PRIVATE_KEY
         value: "0x807aa72bd90119bf8ef49a201ded88326ca2812fc2430f8d1cafff342a707e65"
