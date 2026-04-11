@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: chain-probe-api
+    env: node
+    region: oregon
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: PRIVATE_KEY
+        sync: false
+      - key: OG_MODEL
+        value: anthropic/claude-4.0-sonnet
