@@ -26,7 +26,31 @@
   --sans:'Space Grotesk', sans-serif;
 }
 
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;}
+body{
+  background:var(--bg);
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(124,58,237,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(34,211,165,0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0a0a 0%, #111 50%, #0a0a0a 100%);
+  background-size:200% 200%;
+  animation:bgPulse 15s ease infinite;
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+@keyframes bgPulse{
+  0%,100%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:rgba(10,10,10,0.75);
+  pointer-events:none;
+  z-index:-1;
+}
 
 nav{
   display:flex;align-items:center;justify-content:space-between;
@@ -150,7 +174,7 @@ textarea:focus{border-color:var(--accent2);}
   background:var(--border);margin-bottom:1px;
 }
 .score-cell{
-  background:var(--bg2);padding:1.5rem 1rem;text-align:center;
+  background:rgba(17,17,17,0.9);padding:1.5rem 1rem;text-align:center;
 }
 .score-big{
   font-family:var(--mono);font-size:40px;font-weight:700;
@@ -161,14 +185,14 @@ textarea:focus{border-color:var(--accent2);}
 .verdict-banner{
   padding:14px 20px;margin-bottom:1px;
   display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg2);border-left:3px solid;
+  background:rgba(17,17,17,0.9);border-left:3px solid;
 }
 .verdict-txt{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;}
 .verdict-sub{font-size:13px;color:var(--muted);max-width:600px;line-height:1.6;}
 
 .issues-list{display:flex;flex-direction:column;gap:1px;background:var(--border);}
 .issue-row{
-  background:var(--bg2);padding:14px 18px;
+  background:rgba(17,17,17,0.9);padding:14px 18px;
   display:flex;gap:14px;align-items:flex-start;
   border-left:3px solid;
 }
@@ -181,14 +205,14 @@ textarea:focus{border-color:var(--accent2);}
 .issue-desc{font-size:12px;color:var(--muted);line-height:1.6;}
 
 .analysis-block{
-  background:var(--bg2);padding:1.5rem;
+  background:rgba(17,17,17,0.9);padding:1.5rem;
   font-size:13px;line-height:1.75;color:#ccc;
   border-left:3px solid var(--border2);
   margin-bottom:1px;
 }
 
 .proof-box{
-  background:var(--bg3);border:1px solid var(--border);
+  background:rgba(24,24,24,0.95);border:1px solid var(--border);
   padding:14px 18px;
   font-family:var(--mono);font-size:11px;color:var(--muted);
   line-height:1.8;
