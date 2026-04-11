@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync, existsSync } from 'fs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -174,11 +176,26 @@ function parseJSONResponse(text) {
 }
 
 app.get('/', (req, res) => {
-  const indexPath = path.resolve(__dirname, '..', 'index.html');
-  console.log('Serving:', indexPath);
-  res.sendFile(indexPath, (err) => {
-    if (err) res.status(500).send('Error: ' + err.message);
-  });
+  const possiblePaths = [
+    path.join(__dirname, 'index.html'),
+    path.join(__dirname, '..', 'index.html'),
+    path.join(__dirname, '..', '..', 'index.html'),
+  ];
+  
+  let indexPath = null;
+  for (const p of possiblePaths) {
+    console.log('Checking:', p, existsSync(p) ? 'EXISTS' : 'NOT FOUND');
+    if (existsSync(p)) {
+      indexPath = p;
+      break;
+    }
+  }
+  
+  if (indexPath) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(500).send('index.html not found. Tried: ' + possiblePaths.join(', '));
+  }
 });
 
 app.listen(PORT, () => {
