@@ -176,15 +176,17 @@ function parseJSONResponse(text) {
 }
 
 app.get('/', (req, res) => {
+  res.redirect('/index.html');
+});
+
+app.get('/index.html', (req, res) => {
   const possiblePaths = [
-    path.join(__dirname, 'index.html'),
     path.join(__dirname, '..', 'index.html'),
-    path.join(__dirname, '..', '..', 'index.html'),
+    path.join(process.cwd(), 'index.html'),
   ];
   
   let indexPath = null;
   for (const p of possiblePaths) {
-    console.log('Checking:', p, existsSync(p) ? 'EXISTS' : 'NOT FOUND');
     if (existsSync(p)) {
       indexPath = p;
       break;
@@ -192,9 +194,10 @@ app.get('/', (req, res) => {
   }
   
   if (indexPath) {
-    res.sendFile(indexPath);
+    const html = readFileSync(indexPath, 'utf-8');
+    res.type('html').send(html);
   } else {
-    res.status(500).send('index.html not found. Tried: ' + possiblePaths.join(', '));
+    res.status(500).send('index.html not found in: ' + possiblePaths.join(', '));
   }
 });
 
