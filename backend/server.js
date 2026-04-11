@@ -181,12 +181,13 @@ app.get('/', (req, res) => {
 
 app.get('/index.html', (req, res) => {
   const possiblePaths = [
-    path.join(__dirname, '..', 'index.html'),
     path.join(process.cwd(), 'index.html'),
+    path.join(__dirname, 'index.html'),
   ];
   
   let indexPath = null;
   for (const p of possiblePaths) {
+    console.log('Checking:', p);
     if (existsSync(p)) {
       indexPath = p;
       break;
@@ -197,7 +198,7 @@ app.get('/index.html', (req, res) => {
     const html = readFileSync(indexPath, 'utf-8');
     res.type('html').send(html);
   } else {
-    res.status(500).send('index.html not found in: ' + possiblePaths.join(', '));
+    res.status(500).send('index.html not found. CWD: ' + process.cwd());
   }
 });
 
