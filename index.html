@@ -26,6 +26,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem
 .hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem}
 .hero h1{font-size:clamp(40px,6vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;text-transform:uppercase;margin-bottom:1rem}
 .hero h1 .dim{color:#444}
+.hero-intro{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:5rem 2rem 3rem;max-width:960px;margin:0 auto;border-bottom:1px solid var(--border)}
+.hero-title{flex:1;min-width:0}
+.hero-logo{width:320px;display:flex;justify-content:center;align-items:center}
+.logo-anim{width:320px;height:auto;animation:logoPulse 2s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@media (max-width:900px){.hero-intro{flex-direction:column;text-align:center}.hero-logo{width:60%;margin-top:1rem}.logo-anim{width:240px}}
 .hero-sub{font-size:14px;color:var(--muted);letter-spacing:.05em;max-width:480px;line-height:1.7;margin-bottom:2.5rem}
 .hero-stats{display:flex;gap:3rem}
 .hero-stat-num{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent)}
@@ -90,7 +96,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
 <body>
 <nav><div class="nav-logo">CHAIN<span>—</span>PROBE</div><div class="nav-right"><a class="nav-link" href="https://docs.opengradient.ai">Docs</a><a class="nav-link" href="https://explorer.opengradient.ai">Explorer</a><div class="nav-badge">TEE Live</div></div></nav>
 <div class="ticker-wrap"><div class="ticker-inner"><span class="ticker-item">OpenGradient TEE <span>● ONLINE</span></span><span class="ticker-item">Settlement <span>BASE SEPOLIA</span></span><span class="ticker-item">Inference <span>VERIFIED</span></span><span class="ticker-item">Intel TDX <span>ATTESTED</span></span><span class="ticker-item">Models <span>GPT-4.1/CLAUDE</span></span><span class="ticker-item">Token <span>$OPG</span></span><span class="ticker-item">Proof <span>BATCH_HASHED</span></span></div></div>
-<div class="hero"><div class="hero-eyebrow">// Smart Contract Security</div><h1><img class="logo-img" src="https://raw.githubusercontent.com/wabrent/CHAIN-PROBE/master/logo-trp-blue%402x.png" alt="🔒"/>AUDIT.<br><span class="dim">WITH</span><br>PROOF.</h1><p class="hero-sub">Paste Solidity code. Get AI security analysis inside OpenGradient TEE.</p><div class="hero-stats"><div><div class="hero-stat-num">TEE</div><div class="hero-stat-label">Verified exec</div></div><div><div class="hero-stat-num">On-chain</div><div class="hero-stat-label">Proof hash</div></div><div><div class="hero-stat-num">$OPG</div><div class="hero-stat-label">Payment token</div></div></div></div>
+<div class="hero-intro"><div class="hero-title"><div class="hero-eyebrow">// Smart Contract Security</div><h1>AUDIT.<br><span class="dim">WITH</span><br>PROOF.</h1><p class="hero-sub">Paste Solidity code. Get AI security analysis inside OpenGradient TEE.</p><div class="hero-stats"><div><div class="hero-stat-num">TEE</div><div class="hero-stat-label">Verified exec</div></div><div><div class="hero-stat-num">On-chain</div><div class="hero-stat-label">Proof hash</div></div><div><div class="hero-stat-num">$OPG</div><div class="hero-stat-label">Payment token</div></div></div></div><div class="hero-logo"><img class="logo-anim" src="https://raw.githubusercontent.com/wabrent/CHAIN-PROBE/master/logo-trp-blue%402x.png" alt="ChainProbe Logo"/></div></div>
 <div class="tool-wrap"><div class="input-section"><label class="input-label">// Solidity source code</label><textarea id="codeInput" placeholder="pragma solidity ^0.8.0;
 
 contract Vault {
