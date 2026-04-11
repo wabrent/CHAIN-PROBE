@@ -174,14 +174,7 @@ function parseJSONResponse(text) {
 }
 
 app.get('/', (req, res) => {
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  console.log('Serving index from:', indexPath);
-  res.sendFile(indexPath, (err) => {
-    if (err) {
-      console.log('Error:', err);
-      res.status(500).send('Error: ' + err.message);
-    }
-  });
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 app.listen(PORT, () => {
