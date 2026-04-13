@@ -162,7 +162,7 @@ var auditHistory=JSON.parse(localStorage.getItem('chainprobe_history')||'[]');
 var walletProvider=null;
 var walletSigner=null;
 var walletAddress=null;
-var AUDIT_CONTRACT='0x7426D3e3C92e78dA4003dC97C2fC584E8cC02A4';
+var AUDIT_CONTRACT='0x9ecEA68DE55F316B702f27eE389D10C2EE0dde84';
 var CHAIN_ID=84532;
 async function connectWallet(){if(typeof window.ethereum==='undefined'){showToast('MetaMask not installed');return;}try{walletProvider=new ethers.BrowserProvider(window.ethereum);walletSigner=await walletProvider.getSigner();walletAddress=await walletSigner.getAddress();document.getElementById('walletBtn').textContent='● '+walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);showToast('Wallet connected');}catch(e){showToast('Connection failed: '+e.message);}}
 async function sendAuditTx(code,score,verdict){if(!walletSigner){showToast('Connect wallet first');return null;}try{var network=await walletProvider.getNetwork();if(network.chainId!==BigInt(CHAIN_ID)){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CHAIN_ID.toString(16)}]});}catch(e){showToast('Switch to Base Sepolia');return null;}}var iface=new ethers.Interface(['function submitAudit(string calldata codeHash,uint8 score,string calldata verdict)']);
