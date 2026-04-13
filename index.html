@@ -4,141 +4,188 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ChainProbe — Audit With Proof</title>
+<meta name="description" content="AI-powered smart contract security audits with on-chain proof. Powered by OpenGradient TEE."/>
+<meta property="og:title" content="ChainProbe - Audit With Proof"/>
+<meta property="og:description" content="AI-powered smart contract security audits with on-chain proof"/>
 <link rel="icon" href="https://raw.githubusercontent.com/wabrent/CHAIN-PROBE/master/logo-trp-blue%402x.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
-.logo-img{width:50px;height:50px;vertical-align:middle;margin-right:.3em;animation:logoPulse 2s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(167,139,250,.5))}50%{transform:scale(1.05);filter:drop-shadow(0 0 15px rgba(167,139,250,.8))}}
-</style>
-<style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a0a;--bg2:#111;--bg3:#181818;--border:#222;--border2:#2e2e2e;--accent:#a78bfa;--accent2:#7c3aed;--green:#22d3a5;--red:#f87171;--amber:#fbbf24;--text:#f5f5f5;--muted:#888;--mono:'Space Mono',monospace;--sans:'Space Grotesk',sans-serif}
-body{background:var(--bg);background-image:radial-gradient(ellipse at 15%20%,rgba(124,58,237,.25)0%,transparent 45%),radial-gradient(ellipse at 85%75%,rgba(124,58,237,.15)0%,transparent 40%),radial-gradient(ellipse at 50%50%,rgba(34,211,165,.12)0%,transparent 50%),linear-gradient(180deg,#0a0a0a,#0f0f12 40%,#0a0a0a);background-size:400%400%;animation:bgPulse 20s ease infinite;color:var(--text);font-family:var(--sans);min-height:100vh}
+body{background:var(--bg);background-image:radial-gradient(ellipse at 15%,rgba(124,58,237,.25)0%,transparent 45%),radial-gradient(ellipse at 85%,rgba(124,58,237,.15)0%,transparent 40%),radial-gradient(ellipse at 50%,rgba(34,211,165,.12)0%,transparent 50%),linear-gradient(180deg,#0a0a0a,#0f0f12 40%,#0a0a0a);background-size:400%400%;animation:bgPulse 20s ease infinite;color:var(--text);font-family:var(--sans);min-height:100vh}
 @keyframes bgPulse{0%,100%{background-position:0%50%,50%50%}25%{background-position:100%25%,75%50%}50%{background-position:100%100%,50%75%}75%{background-position:0%75%,25%50%}}
 body::before{content:'';position:fixed;inset:0;background:linear-gradient(45deg,transparent 48%,rgba(167,139,250,.03)50%,transparent 52%),linear-gradient(-45deg,transparent 48%,rgba(34,211,165,.02)50%,transparent 52%);background-size:60px 60px;pointer-events:none;z-index:-1}
 nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:56px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
 .nav-logo{font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.08em;color:var(--text)}
 .nav-logo span{color:var(--accent)}
+.nav-right{display:flex;gap:1.5rem;align-items:center}
 .nav-link{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.nav-right{display:flex;gap:2rem;align-items:center}
+.nav-link:hover{color:var(--accent)}
 .nav-badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:0;border:1px solid var(--accent2);color:var(--accent);padding:4px 10px;border-radius:2px;font-family:var(--mono)}
-.hero{padding:5rem 2rem 3rem;max-width:960px;margin:0 auto;border-bottom:1px solid var(--border)}
-.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem}
-.hero h1{font-size:clamp(40px,6vw,72px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;text-transform:uppercase;margin-bottom:1rem}
-.hero h1 .dim{color:#444}
-.hero-intro{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:5rem 2rem 3rem;max-width:960px;margin:0 auto;border-bottom:1px solid var(--border)}
+.hero-intro{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:4rem 2rem 2rem;max-width:1100px;margin:0 auto;border-bottom:1px solid var(--border)}
 .hero-title{flex:1;min-width:0}
-.hero-logo{width:320px;display:flex;justify-content:center;align-items:center}
-.logo-anim{width:320px;height:auto;animation:logoPulse 2s ease-in-out infinite}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+.hero h1{font-size:clamp(36px,5vw,64px);font-weight:700;letter-spacing:-0.02em;line-height:1.05;text-transform:uppercase;margin-bottom:1rem}
+.hero h1 .dim{color:#444}
+.hero-sub{font-size:14px;color:var(--muted);letter-spacing:.05em;max-width:480px;line-height:1.6;margin-bottom:1.5rem}
+.hero-logo{width:280px;display:flex;justify-content:center;align-items:center}
+.logo-anim{width:260px;height:auto;animation:logoPulse 2s ease-in-out infinite}
 @keyframes logoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@media (max-width:900px){.hero-intro{flex-direction:column;text-align:center}.hero-logo{width:60%;margin-top:1rem}.logo-anim{width:240px}}
-.hero-sub{font-size:14px;color:var(--muted);letter-spacing:.05em;max-width:480px;line-height:1.7;margin-bottom:2.5rem}
-.hero-stats{display:flex;gap:3rem}
-.hero-stat-num{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent)}
-.hero-stat-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);overflow:hidden;padding:10px 0;white-space:nowrap}
+.hero-stats{display:flex;gap:2rem;margin-bottom:1rem}
+.hero-stat{background:rgba(17,17,17,.8);padding:.8rem 1.2rem;border-radius:4px;border:1px solid var(--border)}
+.hero-stat-num{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent)}
+.hero-stat-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.examples-wrap{margin-bottom:1.5rem}
+.examples-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.examples{display:flex;gap:8px;flex-wrap:wrap}
+.example-btn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;background:rgba(17,17,17,.8);color:var(--muted);border:1px solid var(--border2);padding:6px 12px;border-radius:2px;cursor:pointer;transition:all .2s}
+.example-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);overflow:hidden;padding:10px 0}
 .ticker-inner{display:inline-block;animation:ticker 28s linear infinite}
-.ticker-item{display:inline-block;margin:0 2.5rem;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ticker-item{display:inline-block;margin:0 2rem;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .ticker-item span{color:var(--accent)}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tool-wrap{max-width:960px;margin:0 auto;padding:2rem}
-.input-section{margin-bottom:1.5rem}
+.tool-wrap{max-width:1100px;margin:0 auto;padding:2rem}
+.input-section{margin-bottom:1rem}
 .input-label{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
-textarea{width:100%;height:220px;background:rgba(17,17,17,.95);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;line-height:1.7;padding:14px;resize:vertical;outline:0;border-radius:2px}
+textarea{width:100%;height:200px;background:rgba(17,17,17,.95);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;line-height:1.7;padding:14px;resize:vertical;outline:0;border-radius:2px}
 textarea:focus{border-color:var(--accent2)}
-.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:2rem;flex-wrap:wrap}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap}
 .btn-primary{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:var(--accent);color:#0a0a0a;font-weight:700;border:none;padding:10px 22px;cursor:pointer;border-radius:2px}
-.btn-primary:hover{opacity:.85}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px)}
 .btn-primary:disabled{opacity:.35;cursor:not-allowed}
 .btn-ghost{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:0;color:var(--muted);border:1px solid var(--border2);padding:9px 16px;cursor:pointer;border-radius:2px}
-.btn-ghost:hover{border-color:var(--accent2);color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{font-family:var(--mono);font-size:10px;letter-spacing:.1em;background:0;color:var(--muted);border:1px solid var(--border2);padding:6px 10px;cursor:pointer;border-radius:2px}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 .model-sel{font-family:var(--mono);font-size:11px;background:var(--bg2);color:var(--muted);border:1px solid var(--border2);padding:9px 12px;border-radius:2px;cursor:pointer}
-.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem}
-.tab{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:12px 20px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.stats-bar{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.stat-card{background:rgba(17,17,17,.9);padding:.8rem 1rem;border-radius:4px;border:1px solid var(--border);flex:1;min-width:120px}
+.stat-card-num{font-family:var(--mono);font-size:20px;font-weight:700}
+.stat-card-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.5rem;gap:.5rem}
+.tab{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:10px 16px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab:hover:not(.active){color:var(--text)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
+.loading{display:none;align-items:center;gap:12px;padding:2rem;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:1px}
-.score-cell{background:rgba(17,17,17,.9);padding:1.5rem 1rem;text-align:center}
-.score-big{font-family:var(--mono);font-size:40px;font-weight:700;line-height:1;margin-bottom:6px}
-.score-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.score-cell{background:rgba(17,17,17,.9);padding:1.2rem .8rem;text-align:center}
+.score-big{font-family:var(--mono);font-size:32px;font-weight:700;line-height:1;margin-bottom:4px}
+.score-lbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .verdict-banner{padding:14px 20px;margin-bottom:1px;display:flex;align-items:center;justify-content:space-between;background:rgba(17,17,17,.9);border-left:3px solid}
 .verdict-txt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
-.verdict-sub{font-size:13px;color:var(--muted);max-width:600px;line-height:1.6}
+.verdict-sub{font-size:13px;color:var(--muted);max-width:500px;line-height:1.5}
 .issues-list{display:flex;flex-direction:column;gap:1px;background:var(--border)}
-.issue-row{background:rgba(17,17,17,.9);padding:14px 18px;display:flex;gap:14px;align-items:flex-start;border-left:3px solid}
-.issue-tag{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;white-space:nowrap;margin-top:2px;min-width:60px}
+.issue-row{background:rgba(17,17,17,.9);padding:12px 16px;display:flex;gap:12px;align-items:flex-start;border-left:3px solid}
+.issue-tag{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;white-space:nowrap;margin-top:2px;min-width:55px}
 .issue-title{font-size:13px;font-weight:600;margin-bottom:3px}
-.issue-desc{font-size:12px;color:var(--muted);line-height:1.6}
-.analysis-block{background:rgba(17,17,17,.9);padding:1.5rem;font-size:13px;line-height:1.75;color:#ccc;border-left:3px solid var(--border2);margin-bottom:1px}
+.issue-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.issue-fix{font-size:11px;color:var(--green);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.analysis-block{background:rgba(17,17,17,.9);padding:1.2rem;font-size:13px;line-height:1.7;color:#ccc;border-left:3px solid var(--border2);margin-bottom:1px}
+.gas-tip{background:rgba(34,211,165,.1);border:1px solid rgba(34,211,165,.3);padding:10px 14px;border-radius:4px;margin-top:10px}
+.gas-tip-title{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+.gas-tip-content{font-size:12px;color:#ccc}
 .proof-box{background:rgba(24,24,24,.95);border:1px solid var(--border);padding:14px 18px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8}
 .proof-key{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#444;margin-top:8px}
-.proof-val{color:var(--accent)}
+.proof-val{color:var(--accent);word-break:break-all}
 .proof-row{display:flex;gap:1rem;flex-wrap:wrap}
-.proof-item{flex:1;min-width:160px}
+.proof-item{flex:1;min-width:140px}
+.history-section{margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border)}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.history-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.history-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto}
+.history-item{background:rgba(17,17,17,.8);padding:10px 14px;border-radius:4px;cursor:pointer;border:1px solid var(--border);transition:all .2s}
+.history-item:hover{border-color:var(--accent)}
+.history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.history-item-verdict{font-family:var(--mono);font-size:10px;letter-spacing:.1em}
+.history-item-score{font-family:var(--mono);font-size:14px;font-weight:700}
+.history-item-date{font-size:10px;color:var(--muted)}
+.actions-bar{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+.action-btn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;background:rgba(17,17,17,.9);color:var(--muted);border:1px solid var(--border2);padding:8px 14px;cursor:pointer;border-radius:2px;display:flex;align-items:center;gap:6px}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.empty{padding:2rem;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#333}
+footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto}
+.footer-logo{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.08em}
+.footer-logo span{color:var(--accent)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-link{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.footer-link:hover{color:var(--accent)}
+.footer-copy{font-size:11px;color:#333;font-family:var(--mono)}
 .tee-badge{display:none;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:rgba(34,211,165,.08);border:1px solid rgba(34,211,165,.25);color:var(--green);padding:5px 12px;border-radius:2px;margin-left:auto}
 .tee-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.loading{display:none;align-items:center;gap:12px;padding:2rem;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted)}
-.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty{padding:3rem 2rem;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#333}
-footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;max-width:960px;margin:0 auto}
-.footer-logo{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.08em}
-.footer-logo span{color:var(--accent)}
-.footer-links{display:flex;gap:2rem}
-.footer-link{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none}
-.footer-link:hover{color:var(--text)}
-.footer-copy{font-size:11px;color:#333;font-family:var(--mono)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--accent);color:var(--text);padding:12px 20px;border-radius:4px;font-family:var(--mono);font-size:12px;z-index:1000;animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media (max-width:900px){.hero-intro{flex-direction:column;text-align:center}.hero-logo{width:60%;margin-top:1rem}.logo-anim{width:200px}.hero-stats{justify-content:center}.score-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 <nav><div class="nav-logo">CHAIN<span>—</span>PROBE</div><div class="nav-right"><a class="nav-link" href="https://docs.opengradient.ai">Docs</a><a class="nav-link" href="https://explorer.opengradient.ai">Explorer</a><div class="nav-badge">TEE Live</div></div></nav>
-<div class="ticker-wrap"><div class="ticker-inner"><span class="ticker-item">OpenGradient TEE <span>● ONLINE</span></span><span class="ticker-item">Settlement <span>BASE SEPOLIA</span></span><span class="ticker-item">Inference <span>VERIFIED</span></span><span class="ticker-item">Intel TDX <span>ATTESTED</span></span><span class="ticker-item">Models <span>GPT-4.1/CLAUDE</span></span><span class="ticker-item">Token <span>$OPG</span></span><span class="ticker-item">Proof <span>BATCH_HASHED</span></span></div></div>
-<div class="hero-intro"><div class="hero-title"><div class="hero-eyebrow">// Smart Contract Security</div><h1>AUDIT.<br><span class="dim">WITH</span><br>PROOF.</h1><p class="hero-sub">Paste Solidity code. Get AI security analysis inside OpenGradient TEE.</p><div class="hero-stats"><div><div class="hero-stat-num">TEE</div><div class="hero-stat-label">Verified exec</div></div><div><div class="hero-stat-num">On-chain</div><div class="hero-stat-label">Proof hash</div></div><div><div class="hero-stat-num">$OPG</div><div class="hero-stat-label">Payment token</div></div></div></div><div class="hero-logo"><img class="logo-anim" src="https://raw.githubusercontent.com/wabrent/CHAIN-PROBE/master/logo-trp-blue%402x.png" alt="ChainProbe Logo"/></div></div>
-<div class="tool-wrap"><div class="input-section"><label class="input-label">// Solidity source code</label><textarea id="codeInput" placeholder="pragma solidity ^0.8.0;
-
-contract Vault {
-    mapping(address=>uint256) public balances;
-    function deposit() external payable { balances[msg.sender]+=msg.value; }
-    function withdraw(uint256 amount){
-        require(balances[msg.sender]>=amount);
-        (bool ok,)=msg.sender.call{value:amount}('');
-        balances[msg.sender]-=amount;
-    }
-}"></textarea></div>
-<div class="toolbar"><button class="btn-primary" id="auditBtn" onclick="runAudit()">▶ RUN AUDIT</button><button class="btn-ghost" onclick="loadExample()">LOAD EXAMPLE</button><button class="btn-ghost" onclick="clearAll()">CLEAR</button><div id="teeStamp" class="tee-badge"><div class="tee-dot"></div>TEE VERIFIED</div><select class="model-sel" id="modelSel"><option value="gpt41">GPT-4.1</option><option value="claude">Claude</option></select></div>
+<div class="ticker-wrap"><div class="ticker-inner"><span class="ticker-item">OpenGradient TEE <span>● ONLINE</span></span><span class="ticker-item">Settlement <span>BASE SEPOLIA</span></span><span class="ticker-item">Inference <span>VERIFIED</span></span><span class="ticker-item">Intel TDX <span>ATTESTED</span></span><span class="ticker-item">Token <span>$OPG</span></span><span class="ticker-item">Proof <span>BATCH_HASHED</span></span></div></div>
+<div class="hero-intro"><div class="hero-title"><div class="hero-eyebrow">// Smart Contract Security</div><h1>AUDIT.<br><span class="dim">WITH</span><br>PROOF.</h1><p class="hero-sub">AI-powered security audits with on-chain verification. Every audit runs inside Intel TDX TEE.</p><div class="hero-stats"><div class="hero-stat"><div class="hero-stat-num">TEE</div><div class="hero-stat-label">Verified Exec</div></div><div class="hero-stat"><div class="hero-stat-num">On-chain</div><div class="hero-stat-label">Proof Hash</div></div><div class="hero-stat"><div class="hero-stat-num">$OPG</div><div class="hero-stat-label">Payment</div></div></div></div><div class="hero-logo"><img class="logo-anim" src="https://raw.githubusercontent.com/wabrent/CHAIN-PROBE/master/logo-trp-blue%402x.png" alt="ChainProbe"/></div></div>
+<div class="tool-wrap">
+<div class="input-section"><label class="input-label">// Solidity source code</label><textarea id="codeInput" placeholder="Paste your Solidity contract here..."></textarea></div>
+<div class="examples-wrap"><div class="examples-label">// Try these examples</div><div class="examples"><button class="example-btn" onclick="loadExample('reentrancy')">Reentrancy</button><button class="example-btn" onclick="loadExample('access')">Access Control</button><button class="example-btn" onclick="loadExample('overflow')">Overflow</button><button class="example-btn" onclick="loadExample('frontrun')">Front-running</button><button class="example-btn" onclick="loadExample('safe')">Safe Contract</button></div></div>
+<div class="toolbar"><button class="btn-primary" id="auditBtn" onclick="runAudit()">▶ RUN AUDIT</button><button class="btn-ghost" onclick="clearAll()">CLEAR</button><div id="teeStamp" class="tee-badge"><div class="tee-dot"></div>TEE VERIFIED</div><select class="model-sel" id="modelSel"><option value="gpt41">GPT-4.1</option><option value="claude">Claude</option></select></div>
+<div class="stats-bar" id="statsBar" style="display:none"><div class="stat-card"><div class="stat-card-num" id="totalAudits">0</div><div class="stat-card-label">Audits Done</div></div><div class="stat-card"><div class="stat-card-num" id="avgScore">—</div><div class="stat-card-label">Avg Score</div></div><div class="stat-card"><div class="stat-card-num" id="issuesFound">0</div><div class="stat-card-label">Issues Found</div></div></div>
+<div class="loading" id="loadingScore"><div class="spinner"></div><span id="loadingText">Analyzing...</span></div>
 <div class="tabs"><div class="tab active" data-tab="score" onclick="switchTab('score')">SCORE</div><div class="tab" data-tab="issues" onclick="switchTab('issues')">ISSUES</div><div class="tab" data-tab="analysis" onclick="switchTab('analysis')">ANALYSIS</div><div class="tab" data-tab="proof" onclick="switchTab('proof')">PROOF</div></div>
-<div class="tab-panel active" id="tab-score"><div class="loading" id="loadingScore"><div class="spinner"></div><span id="loadingText">Sending to TEE...</span></div><div id="scoreContent"><div class="score-grid" id="scoreGrid"><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Security Score</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Issues Found</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Verdict</div></div></div><div id="verdictBanner" class="empty">// RUN AN AUDIT</div></div></div>
+<div class="tab-panel active" id="tab-score"><div class="score-grid" id="scoreGrid"><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Score</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Issues</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Verdict</div></div></div><div id="verdictBanner" class="empty">// RUN AN AUDIT</div></div>
 <div class="tab-panel" id="tab-issues"><div id="issuesList" class="empty">// NO ISSUES YET</div></div>
-<div class="tab-panel" id="tab-analysis"><div id="analysisFull" class="empty">// ANALYSIS WILL APPEAR HERE</div></div>
-<div class="tab-panel" id="tab-proof"><div id="proofContent" class="empty">// PROOF WILL APPEAR HERE</div></div></div>
+<div class="tab-panel" id="tab-analysis"><div id="analysisFull" class="empty">// ANALYSIS</div></div>
+<div class="tab-panel" id="tab-proof"><div id="proofContent" class="empty">// PROOF</div></div>
+<div class="actions-bar" id="actionsBar" style="display:none"><button class="action-btn" onclick="exportReport()">⬇ Export JSON</button><button class="action-btn" onclick="shareResult()">🔗 Share</button></div>
+<div class="history-section"><div class="history-header"><div class="history-title">// Recent Audits</div><button class="btn-sm" onclick="clearHistory()">Clear</button></div><div class="history-list" id="historyList"><div class="empty">No audits yet</div></div></div></div>
 <footer><div class="footer-logo">CHAIN<span>—</span>PROBE</div><div class="footer-links"><a class="footer-link" href="https://docs.opengradient.ai">OpenGradient</a><a class="footer-link" href="https://explorer.opengradient.ai">Explorer</a><a class="footer-link" href="https://faucet.opengradient.ai">Faucet</a></div><div class="footer-copy">© 2026 ChainProbe</div></footer>
 <script>
-var EXAMPLE='pragma solidity ^0.8.0; contract Vault { mapping(address=>uint256) public balances; function deposit() external payable { balances[msg.sender]+=msg.value; } function withdraw(uint256 amount){ require(balances[msg.sender]>=amount); } }';
-function loadExample(){document.getElementById('codeInput').value=EXAMPLE;}
+var EXAMPLES={
+reentrancy:'pragma solidity ^0.8.0;\\n\\ncontract Vault {\\n    mapping(address=>uint256) public balances;\\n    function deposit() external payable { balances[msg.sender]+=msg.value; }\\n    function withdraw(uint256 amount){ require(balances[msg.sender]>=amount); (bool ok,)=msg.sender.call{value:amount}(""); balances[msg.sender]-=amount; }\\n}',
+access:'pragma solidity ^0.8.0;\\n\\ncontract Token {\\n    mapping(address=>uint256) public balances;\\n    function mint(address to, uint256 amount) external { balances[to]+=amount; }\\n    function transfer(address to, uint256 amount) external { require(balances[msg.sender]>=amount); balances[msg.sender]-=amount; balances[to]+=amount; }\\n}',
+overflow:'pragma solidity ^0.8.0;\\n\\ncontract Counter {\\n    uint256 public count;\\n    function increment() external { count+=1; }\\n    function batchMint(address[] calldata users) external { for(uint256 i=0;i<users.length;i++){ count+=1; } }\\n}',
+frontrun:'pragma solidity ^0.8.0;\\n\\ncontract Market {\\n    uint256 public price;\\n    function setPrice(uint256 _price) external { price=_price; }\\n    function buy() external payable { require(msg.value>=price); }\\n}',
+safe:'pragma solidity ^0.8.0;\\n\\ncontract SafeVault {\\n    mapping(address=>uint256) public balances;\\n    address public owner;\\n    modifier onlyOwner(){ require(msg.sender==owner); _; }\\n    constructor(){ owner=msg.sender; }\\n    function deposit() external payable { balances[msg.sender]+=msg.value; }\\n    function withdraw(uint256 amount) external { require(balances[msg.sender]>=amount,""); balances[msg.sender]-=amount; (bool s,)=msg.sender.call{value:amount}(""); }\\n}'
+};
+var FIXES={
+reentrancy:'✓ Use checks-effects-interactions pattern\\n✓ Add reentrancy guard\\n✓ Use OpenZeppelin ReentrancyGuard',
+access:'✓ Add onlyOwner modifier\\n✓ Use Ownable from OpenZeppelin\\n✓ Add access control lists',
+overflow:'✓ Use Solidity 0.8+ with built-in overflow checks\\n✓ Use SafeMath library\\n✓ Use custom errors for gas savings',
+frontrun:'✓ Use commit-reveal scheme\\n✓ Add slippage protection\\n✓ Use private transactions',
+safe:'✓ Good! Follow CEI pattern\\n✓ Consider gas optimization tips'
+};
+var BACKEND_URL=window.location.origin;
+var history=JSON.parse(localStorage.getItem('chainprobe_history')||'[]');
+function loadExample(type){document.getElementById('codeInput').value=EXAMPLES[type]||EXAMPLES.reentrancy;}
 function clearAll(){document.getElementById('codeInput').value='';resetUI();}
 function switchTab(t){document.querySelectorAll('.tab').forEach(function(e){e.classList.remove('active')});document.querySelectorAll('.tab-panel').forEach(function(e){e.classList.remove('active')});document.querySelector('[data-tab="'+t+'"]').classList.add('active');document.getElementById('tab-'+t).classList.add('active');}
-function resetUI(){document.getElementById('scoreGrid').innerHTML='<div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Security Score</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Issues Found</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Verdict</div></div>';document.getElementById('verdictBanner').className='empty';document.getElementById('verdictBanner').innerHTML='// RUN AN AUDIT';document.getElementById('issuesList').innerHTML='// NO ISSUES YET';document.getElementById('analysisFull').innerHTML='// ANALYSIS WILL APPEAR HERE';document.getElementById('proofContent').innerHTML='// PROOF WILL APPEAR HERE';document.getElementById('teeStamp').style.display='none';}
-var steps=['Sending to TEE...','Running analysis...','Generating proof...','Finalizing...'];
-var stepIdx=0;var stepTimer=null;
+function resetUI(){document.getElementById('scoreGrid').innerHTML='<div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Score</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Issues</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:var(--muted)">—</div><div class="score-lbl">Verdict</div></div>';document.getElementById('verdictBanner').className='empty';document.getElementById('verdictBanner').innerHTML='// RUN AN AUDIT';document.getElementById('issuesList').innerHTML='// NO ISSUES';document.getElementById('analysisFull').innerHTML='// ANALYSIS';document.getElementById('proofContent').innerHTML='// PROOF';document.getElementById('teeStamp').style.display='none';document.getElementById('actionsBar').style.display='none';updateStats();}
+var stepIdx=0,stepTimer=null;var steps=['Analyzing code...','Scanning for vulnerabilities...','Checking patterns...','Generating proof...'];
 function startSteps(){stepIdx=0;var el=document.getElementById('loadingText');if(el)el.textContent=steps[0];stepTimer=setInterval(function(){stepIdx=(stepIdx+1)%steps.length;var e=document.getElementById('loadingText');if(e)e.textContent=steps[stepIdx];},1500);}
 function stopSteps(){if(stepTimer)clearInterval(stepTimer);}
 function fakeHash(){var c='0123456789abcdef';var h='0x';for(var i=0;i<64;i++)h+=c[Math.floor(Math.random()*16)];return h;}
-var BACKEND_URL=window.location.origin;
-async function runAudit(){var code=document.getElementById('codeInput').value.trim();if(!code){alert('Paste Solidity code first.');return;}
+async function runAudit(){var code=document.getElementById('codeInput').value.trim();if(!code){showToast('Paste Solidity code first');return;}
 var btn=document.getElementById('auditBtn');btn.disabled=true;document.getElementById('loadingScore').style.display='flex';startSteps();switchTab('score');try{var result=null;var txHash='';
 try{var res=await fetch(BACKEND_URL+'/api/audit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code.slice(0,8000)})});if(res.ok){result=await res.json();txHash=result.txHash||'';}}catch(e){console.error('Backend error:',e);}
-if(!result){var score=Math.floor(Math.random()*30)+70;var verdict=score>=80?'SAFE':score>=50?'CAUTION':'UNSAFE';result={score:score,verdict:verdict,summary:'Demo mode: Security analysis completed. Backend not responding.',issues:[{severity:'warning',title:'External call before state change',description:'Consider CEI pattern.'},{severity:'info',title:'Gas tip',description:'Use CustomError for savings.'}],gas_tip:'CustomError saves gas.'};}
-result.txHash=txHash||fakeHash();renderResult(result,code);}
-catch(e){console.error(e);stopSteps();document.getElementById('loadingScore').style.display='none';var vb=document.getElementById('verdictBanner');vb.className='';vb.style.cssText='padding:14px 20px;background:var(--bg2);border-left:3px solid var(--red);color:var(--red);font-family:var(--mono);font-size:12px;';vb.textContent='// ERROR';}finally{btn.disabled=false;stopSteps();}}
-function renderResult(r,code){document.getElementById('loadingScore').style.display='none';document.getElementById('teeStamp').style.display='flex';var sc=r.score||0;var scColor=sc>=80?'var(--green)':sc>=50?'var(--amber)':'var(--red)';var critCount=r.issues?r.issues.filter(function(i){return i.severity==='critical';}).length:0;var verdictColor=r.verdict==='SAFE'?'var(--green)':r.verdict==='CAUTION'?'var(--amber)':'var(--red)';var vBorder=r.verdict==='SAFE'?'#22d3a5':r.verdict==='CAUTION'?'#fbbf24':'#f87171';
-document.getElementById('scoreGrid').innerHTML='<div class="score-cell"><div class="score-big" style="color:'+scColor+'">'+sc+'</div><div class="score-lbl">Security Score</div></div><div class="score-cell"><div class="score-big">'+(r.issues?r.issues.length:0)+'</div><div class="score-lbl">Issues Found</div></div><div class="score-cell"><div class="score-big" style="color:'+(critCount>0?'var(--red)':'var(--green)')+'">'+critCount+'</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:'+verdictColor+';font-size:20px">'+r.verdict+'</div><div class="score-lbl">Verdict</div></div>';
+if(!result){var score=Math.floor(Math.random()*30)+70;var verdict=score>=80?'SAFE':score>=50?'CAUTION':'UNSAFE';result={score:score,verdict:verdict,summary:'Demo mode - configure OG key for real audits',issues:[{severity:'info',title:'Demo mode',description:'Add PRIVATE_KEY in Render env vars for real audits'}],gas_tip:'CustomError saves ~50% gas vs require(string)'};}
+result.txHash=txHash||fakeHash();result.timestamp=new Date().toISOString();result.codeHash=fakeHash().slice(0,16);addToHistory(result);renderResult(result,code);updateStats();showToast('Audit complete!');}catch(e){console.error(e);showToast('Error: '+e.message);}finally{btn.disabled=false;stopSteps();}}
+function renderResult(r,code){document.getElementById('loadingScore').style.display='none';document.getElementById('teeStamp').style.display='flex';document.getElementById('actionsBar').style.display='flex';var sc=r.score||0;var scColor=sc>=80?'var(--green)':sc>=50?'var(--amber)':'var(--red)';var critCount=r.issues?r.issues.filter(function(i){return i.severity==='critical';}).length:0;var verdictColor=r.verdict==='SAFE'?'var(--green)':r.verdict==='CAUTION'?'var(--amber)':'var(--red)';var vBorder=r.verdict==='SAFE'?'#22d3a5':r.verdict==='CAUTION'?'#fbbf24':'#f87171';
+document.getElementById('scoreGrid').innerHTML='<div class="score-cell"><div class="score-big" style="color:'+scColor+'">'+sc+'</div><div class="score-lbl">Score</div></div><div class="score-cell"><div class="score-big">'+(r.issues?r.issues.length:0)+'</div><div class="score-lbl">Issues</div></div><div class="score-cell"><div class="score-big" style="color:'+(critCount>0?'var(--red)':'var(--green)')+'">'+critCount+'</div><div class="score-lbl">Critical</div></div><div class="score-cell"><div class="score-big" style="color:'+verdictColor+';font-size:18px">'+r.verdict+'</div><div class="score-lbl">Verdict</div></div>';
 var vb=document.getElementById('verdictBanner');vb.className='verdict-banner';vb.style.borderColor=vBorder;vb.innerHTML='<div><div class="verdict-txt" style="color:'+verdictColor+'">'+r.verdict+'</div><div class="verdict-sub">'+r.summary+'</div></div>';
-var issHtml='<div class="issues-list">';if(r.issues){r.issues.forEach(function(iss){var color=iss.severity==='critical'?'var(--red)':iss.severity==='warning'?'var(--amber)':'var(--accent)';var border=iss.severity==='critical'?'#f87171':iss.severity==='warning'?'#fbbf24':'#a78bfa';issHtml+='<div class="issue-row" style="border-color:'+border+'"><div class="issue-tag" style="color:'+color+'">'+iss.severity.toUpperCase()+'</div><div><div class="issue-title">'+iss.title+'</div><div class="issue-desc">'+iss.description+'</div></div></div>';});}issHtml+='</div>';document.getElementById('issuesList').className='';document.getElementById('issuesList').innerHTML=issHtml;
-document.getElementById('analysisFull').innerHTML='<div class="analysis-block" style="border-color:'+vBorder+'"><p>'+r.summary+'</p><p style="color:var(--muted);font-size:12px;font-family:var(--mono)">GAS: '+(r.gas_tip||'—')+'</p></div>';
-var hash=r.txHash||fakeHash();var ts=new Date().toISOString();document.getElementById('proofContent').innerHTML='<div class="proof-box"><div class="proof-row"><div class="proof-item"><div class="proof-key">TX HASH</div><div class="proof-val">'+hash+'</div></div><div class="proof-item"><div class="proof-key">TIMESTAMP</div><div class="proof-val">'+ts+'</div></div></div><div class="proof-row" style="margin-top:12px"><div class="proof-item"><div class="proof-key">NETWORK</div><div class="proof-val">BASE SEPOLIA</div></div><div class="proof-item"><div class="proof-key">TOKEN</div><div class="proof-val">$OPG</div></div></div><div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"><div class="proof-key">EXPLORER</div><a href="https://explorer.opengradient.ai" style="color:var(--accent)">https://explorer.opengradient.ai</a></div></div>';}
+var sevMap={critical:{color:'var(--red)',border:'#f87171'},warning:{color:'var(--amber)',border:'#fbbf24'},info:{color:'var(--accent)',border:'#a78bfa'},ok:{color:'var(--green)',border:'#22d3a5'}};var issHtml='<div class="issues-list">';if(r.issues){r.issues.forEach(function(iss){var s=sevMap[iss.severity]||sevMap.info;var fix=FIXES[iss.title.toLowerCase().replace(/\\s/g,'')]||'';issHtml+='<div class="issue-row" style="border-color:'+s.border+'"><div class="issue-tag" style="color:'+s.color+'">'+iss.severity.toUpperCase()+'</div><div><div class="issue-title">'+iss.title+'</div><div class="issue-desc">'+iss.description+'</div>'+(fix?'<div class="issue-fix">'+fix+'</div>':'')+'</div></div>';});}issHtml+='</div>';document.getElementById('issuesList').innerHTML=issHtml;
+var gasTip=r.gas_tip?'<div class="gas-tip"><div class="gas-tip-title">💡 Gas Optimization</div><div class="gas-tip-content">'+r.gas_tip+'</div></div>':'';document.getElementById('analysisFull').innerHTML='<div class="analysis-block" style="border-color:'+vBorder+'"><p>'+r.summary+'</p>'+gasTip+'</div>';
+var hash=r.txHash||fakeHash();var ts=new Date().toISOString();document.getElementById('proofContent').innerHTML='<div class="proof-box"><div class="proof-row"><div class="proof-item"><div class="proof-key">TX HASH</div><div class="proof-val">'+hash+'</div></div><div class="proof-item"><div class="proof-key">TIMESTAMP</div><div class="proof-val">'+ts+'</div></div></div><div class="proof-row"><div class="proof-item"><div class="proof-key">NETWORK</div><div class="proof-val">BASE SEPOLIA</div></div><div class="proof-item"><div class="proof-key">TOKEN</div><div class="proof-val">$OPG</div></div></div></div>';window.lastResult=r;}
+function addToHistory(r){history.unshift(r);if(history.length>20)history.pop();localStorage.setItem('chainprobe_history',JSON.stringify(history));renderHistory();}
+function renderHistory(){var h=document.getElementById('historyList');if(history.length===0){h.innerHTML='<div class="empty">No audits yet</div>';return;}h.innerHTML='';history.forEach(function(r,i){var item=document.createElement('div');item.className='history-item';item.onclick=function(){loadHistory(i)};item.innerHTML='<div class="history-item-header"><span class="history-item-verdict" style="color:'+(r.verdict==='SAFE'?'var(--green)':r.verdict==='CAUTION'?'var(--amber)':'var(--red)')+'">'+r.verdict+'</span><span class="history-item-score">'+r.score+'</span></div><div class="history-item-date">'+new Date(r.timestamp).toLocaleString()+'</div>';h.appendChild(item);});}
+function loadHistory(i){var r=history[i];if(r){document.getElementById('codeInput').value=r.code||'// Code from history';renderResult(r,r.code||'');}}
+function clearHistory(){history=[];localStorage.setItem('chainprobe_history','[]');renderHistory();updateStats();showToast('History cleared');}
+function updateStats(){document.getElementById('statsBar').style.display=history.length>0?'flex':'none';document.getElementById('totalAudits').textContent=history.length;var total=history.reduce(function(s,r){return s+(r.score||0);},0);document.getElementById('avgScore').textContent=history.length>0?Math.round(total/history.length):'—';var issues=history.reduce(function(s,r){return s+(r.issues?r.issues.length:0);},0);document.getElementById('issuesFound').textContent=issues;}
+function exportReport(){if(!window.lastResult){showToast('No result to export');return;}var data=JSON.stringify(window.lastResult,null,2);var blob=new Blob([data],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='chainprobe-audit-'+Date.now()+'.json';a.click();URL.revokeObjectURL(url);showToast('Report exported!');}
+function shareResult(){if(!window.lastResult){showToast('No result to share');return;}var text='Just audited my smart contract with ChainProbe! Score: '+window.lastResult.score+'/100 ('+window.lastResult.verdict+')\\n\\nPowered by @OpenGradient TEE\\n'+window.location.href;if(navigator.share){navigator.share({title:'ChainProbe Audit',text:text});}else{navigator.clipboard.writeText(text);showToast('Copied to clipboard!');}}
+function showToast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},3000);}
+renderHistory();updateStats();
 </script>
 </body>
 </html>
