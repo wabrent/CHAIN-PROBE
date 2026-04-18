@@ -3,6 +3,8 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync, existsSync } from 'fs';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,9 +15,38 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..')));
 
-const OG_ENDPOINT = 'https://llm.opengradient.ai/v1/chat/completions';
+const OG_ENDPOINT = 'https://llmogevm.opengradient.ai/v1/chat/completions';
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
 const CHAIN_ID = 84532;
+
+let x402Fetch = null;
+if (PRIVATE_KEY) {
+  try {
+    const account = privateKeyToAccount(PRIVATE_KEY);
+    const walletClient = createWalletClient({
+      account,
+      chain: {
+        id: 84532,
+        name: 'Base Sepolia',
+        nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+        rpcUrls: { default: { http: ['https://sepolia.base.org'] } }
+      },
+      transport: http()
+    });
+    x402Fetch = async (url, options) => {
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          'X-PAYMENT-ADDRESS': account.address
+        }
+      });
+    };
+    console.log(`✓ x402 ready: ${account.address.slice(0,10)}...`);
+  } catch (e) {
+    console.log('x402 init failed:', e.message);
+  }
+}
 
 const auditPrompt = `You are ChainProbe, a Solidity smart contract security auditor.
 
@@ -66,7 +97,8 @@ app.post('/api/audit', async (req, res) => {
   try {
     console.log(`→ Model: ${selectedModel}`);
     
-    const response = await fetch(OG_ENDPOINT, {
+    const fetcher = x402Fetch || fetch;
+    const response = await fetcher(OG_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -112,8 +144,10 @@ app.post('/api/audit', async (req, res) => {
 
 app.get('/api/status', (req, res) => {
   res.json({
-    status: PRIVATE_KEY ? 'og_ready' : 'demo_mode',
+    status: PRIVATE_KEY ? (x402Fetch ? 'x402_ready' : 'og_ready') : 'demo_mode',
     endpoint: OG_ENDPOINT,
+    chain: CHAIN_ID,
+    x402: !!x402Fetch,
     timestamp: new Date().toISOString()
   });
 });
